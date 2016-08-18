@@ -46,6 +46,7 @@ def renameFiles(app_path):
         os.rename(dirpath + '/' + file, dirpath + '/' + match.group(1))
 
 def replaceNameInContents(filename):
+  print(filename)
   f = open(filename, 'rb')
   data = f.read()
   text = data.decode('utf-8')
