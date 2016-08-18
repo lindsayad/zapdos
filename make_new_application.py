@@ -47,9 +47,10 @@ def renameFiles(app_path):
 
 def replaceNameInContents(filename):
   print(filename)
-  f = open(filename, 'rb')
-  data = f.read()
-  text = data.decode('latin-1')
+  f = open(filename, 'r', encoding='latin-1')
+  # data = f.read()
+  # text = data.decode('latin-1')
+  text = f.read()
   f.close()
 
   # Replace all instances of the word stork with the right case
@@ -60,7 +61,7 @@ def replaceNameInContents(filename):
   mode = os.stat(filename).st_mode
 
   # Now write the file back out
-  f = open(filename + '~tmp', 'w')
+  f = open(filename + '~tmp', 'w', encoding='latin-1')
   f.write(text)
   f.close()
   os.chmod(filename + '~tmp', mode)
