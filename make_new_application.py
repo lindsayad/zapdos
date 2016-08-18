@@ -8,6 +8,7 @@
 import os, sys, re, subprocess
 from optparse import OptionParser
 from shutil import copytree, ignore_patterns
+from io import open
 
 # DO NOT MODIFY
 # This value should be set to true if this stork is within the svn herd repository
