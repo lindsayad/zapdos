@@ -5,7 +5,7 @@
 # create a complete application template built with support for both
 # MOOSE and ELK.  Enjoy!
 
-import os, sys, string, re, subprocess
+import os, sys, re, subprocess
 from optparse import OptionParser
 from shutil import copytree, ignore_patterns
 
@@ -45,7 +45,7 @@ def renameFiles(app_path):
         os.rename(dirpath + '/' + file, dirpath + '/' + match.group(1))
 
 def replaceNameInContents(filename):
-  f = open(filename)
+  f = open(filename, encoding='latin-1')
   text = f.read()
   f.close()
 
@@ -71,7 +71,7 @@ def replacementFunction(match):
 
   # Case 2: all upper case
   if match.group(1) == 'STORK':
-    return string.upper(global_app_name)
+    return str.upper(global_app_name)
 
   # Case 3: First letter is capitalized
   if match.group(1) == 'Stork':
@@ -80,7 +80,7 @@ def replacementFunction(match):
     name = name.replace(" ", "")
     return name
 
-  print match.group(0) + "\nBad Case Detected!"
+  print(match.group(0) + "\nBad Case Detected!")
   sys.exit(1)
 
 if __name__ == '__main__':
@@ -90,12 +90,12 @@ if __name__ == '__main__':
   # Get the animal name
   if global_in_herd:
     if len(args) != 1:
-      print 'Usage: ./make_new_application.py <animal name>'
+      print('Usage: ./make_new_application.py <animal name>')
       sys.exit()
-    global_app_name = string.lower(args[0])
+    global_app_name = str.lower(args[0])
   else:
     if len(args) != 0:
-      print 'Usage: ./make_new_application.py'
+      print('Usage: ./make_new_application.py')
       sys.exit()
     global_app_name = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     copytree('.', '../' + global_app_name, ignore=ignore_patterns('.svn', '.git', '*.module', 'make_new*', 'LICENSE'))
     renameFiles('../' + global_app_name)
 
-    print 'Your application should be ready!\nAdd the directory ../' + global_app_name + ' to your checkout and commit.'
+    print('Your application should be ready!\nAdd the directory ../' + global_app_name + ' to your checkout and commit.')
   else:
     # We are in a git clone
     renameFiles('.')
@@ -121,4 +121,4 @@ if __name__ == '__main__':
     subprocess.check_output("git rm -f *.py Makefile.* run_tests.*", shell=True)
     subprocess.call("git add --all *", shell=True)
 
-    print 'Your application should be ready!\nCommit this directory to your local repository and push.'
+    print('Your application should be ready!\nCommit this directory to your local repository and push.')
