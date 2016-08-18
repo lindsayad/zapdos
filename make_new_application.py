@@ -46,8 +46,9 @@ def renameFiles(app_path):
         os.rename(dirpath + '/' + file, dirpath + '/' + match.group(1))
 
 def replaceNameInContents(filename):
-  f = open(filename, encoding='latin-1')
-  text = f.read()
+  f = open(filename, 'rb')
+  data = f.read()
+  text = data.decode('utf-8')
   f.close()
 
   # Replace all instances of the word stork with the right case
