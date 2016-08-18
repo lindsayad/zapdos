@@ -49,7 +49,7 @@ def replaceNameInContents(filename):
   print(filename)
   f = open(filename, 'rb')
   data = f.read()
-  text = data.decode('utf-8')
+  text = data.decode('latin-1')
   f.close()
 
   # Replace all instances of the word stork with the right case
