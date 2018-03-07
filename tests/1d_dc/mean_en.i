@@ -62,7 +62,6 @@ dom1Scale=1e-7
   [./smp]
     type = SMP
     full = true
-    ksp_norm = none
   [../]
 []
 
@@ -70,19 +69,20 @@ dom1Scale=1e-7
   type = Transient
   end_time = 1e-1
   # end_time = 10
-  petsc_options = '-snes_converged_reason -snes_linesearch_monitor'
+  petsc_options = '-snes_converged_reason -snes_linesearch_monitor -ksp_monitor_true_residual -ksp_monitor_singular_value'
   # petsc_options = '-snes_test_display'
   solve_type = NEWTON
-  petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -ksp_type -snes_linesearch_minlambda'
-  petsc_options_value = 'lu NONZERO 1.e-10 preonly 1e-3'
+  petsc_options_iname = '-pc_type -snes_linesearch_minlambda'
+  petsc_options_value = 'asm 1e-3'
   # petsc_options_iname = '-pc_type -sub_pc_type'
   # petsc_options_value = 'asm lu'
   # petsc_options_iname = '-snes_type'
   # petsc_options_value = 'test'
  nl_rel_tol = 1e-4
  nl_abs_tol = 7.6e-5
-  dtmin = 1e-12
-  l_max_its = 20
+  dtmin = 1e-11
+  l_max_its = 100
+  line_search = 'bt'
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
@@ -95,7 +95,7 @@ dom1Scale=1e-7
 
 [Outputs]
   print_perf_log = true
-  # print_linear_residuals = false
+  print_linear_residuals = false
   [./out]
     type = Exodus
     execute_on = 'final'
@@ -395,7 +395,6 @@ dom1Scale=1e-7
   [../]
   [./emliq]
     block = 1
-    # scaling = 1e-5
   [../]
 
   [./Arp]
@@ -404,12 +403,10 @@ dom1Scale=1e-7
 
   [./mean_en]
     block = 0
-    # scaling = 1e-1
   [../]
 
   [./OHm]
     block = 1
-    # scaling = 1e-5
   [../]
 []
 
