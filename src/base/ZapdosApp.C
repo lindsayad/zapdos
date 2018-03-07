@@ -114,6 +114,7 @@
 #include "HphiRadialInterface.h"
 #include "InterfaceAdvection.h"
 #include "InterfaceLogDiffusionElectrons.h"
+#include "InterfaceCoeffDiffusion.h"
 
 // Constraints
 
@@ -248,6 +249,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerInterfaceKernel(InterfaceAdvection);
   registerInterfaceKernel(HphiRadialInterface);
   registerInterfaceKernel(InterfaceLogDiffusionElectrons);
+  registerInterfaceKernel(InterfaceCoeffDiffusion);
   registerDGKernel(DGCoeffDiffusion);
   registerDGKernel(DGEFieldAdvection);
   registerConstraint(ArbitrarilyTiedValueConstraint);
