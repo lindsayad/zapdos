@@ -25,6 +25,7 @@
 #include "ProductFirstOrderRxn.h"
 #include "LogStabilizationMoles.h"
 #include "ChargeSourceMoles_KV.h"
+#include "ChargeSource.h"
 #include "CoeffDiffusionLin.h"
 #include "ReactantAARxn.h"
 #include "ElectronEnergyLossFromIonization.h"
@@ -42,6 +43,7 @@
 
 // AuxKernels
 
+#include "DensityFromDimensionless.h"
 #include "Sigma.h"
 #include "DriftDiffusionFluxAux.h"
 #include "UserFlux.h"
@@ -63,6 +65,7 @@
 #include "SigmaMat.h"
 #include "JacMat.h"
 #include "Gas.h"
+#include "DimensionlessGas.h"
 #include "Water.h"
 
 // Indicators
@@ -95,6 +98,7 @@
 #include "MatchedValueLogBC.h"
 #include "NeumannCircuitVoltageMoles_KV.h"
 #include "NeumannCircuitVoltageNew.h"
+#include "NeumannCircuitVoltage.h"
 #include "DCIonBC.h"
 
 // Actions
@@ -202,6 +206,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerKernel(LogStabilizationMoles);
   registerKernel(ProductFirstOrderRxn);
   registerKernel(ProductAABBRxn);
+  registerKernel(ChargeSource);
   registerAux(Sigma);
   registerAux(DriftDiffusionFluxAux);
   registerAux(AbsValueAux);
@@ -218,9 +223,11 @@ ZapdosApp::registerObjects(Factory & factory)
   registerAux(DiffusiveFlux);
   registerAux(EFieldAdvAux);
   registerAux(UserFlux);
+  registerAux(DensityFromDimensionless);
   registerMaterial(SigmaMat);
   registerMaterial(JacMat);
   registerMaterial(Gas);
+  registerMaterial(DimensionlessGas);
   registerMaterial(Water);
   registerIndicator(AnalyticalDiffIndicator);
   registerUserObject(BlockAverageValue);
@@ -245,6 +252,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerBoundaryCondition(HagelaarEnergyBC);
   registerBoundaryCondition(HagelaarEnergyAdvectionBC);
   registerBoundaryCondition(NeumannCircuitVoltageMoles_KV);
+  registerBoundaryCondition(NeumannCircuitVoltage);
   registerBoundaryCondition(DCIonBC);
   registerInterfaceKernel(InterfaceAdvection);
   registerInterfaceKernel(HphiRadialInterface);

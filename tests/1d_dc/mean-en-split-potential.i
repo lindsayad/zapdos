@@ -400,11 +400,11 @@ dom1Scale=1e-7
   [../]
   [./em]
     block = 0
-    scaling = 1e-1
+    scaling = 1e0
   [../]
   [./emliq]
     block = 1
-    scaling = 1e-8
+    scaling = 1e0
   [../]
 
   [./Arp]
@@ -414,12 +414,12 @@ dom1Scale=1e-7
 
   [./mean_en]
     block = 0
-    scaling = 1e-2
+    scaling = 1e-1
   [../]
 
   [./OHm]
     block = 1
-    scaling = 1e-8
+    scaling = 1e-2
   [../]
 []
 

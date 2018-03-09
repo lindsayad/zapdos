@@ -9,7 +9,7 @@ validParams<JouleHeating>()
   params.addRequiredCoupledVar(
       "potential", "The gradient of the potential will be used to compute the advection velocity.");
   params.addRequiredCoupledVar("em", "The electron density.");
-  params.addRequiredParam<std::string>("potential_units", "The potential units.");
+  params.addParam<std::string>("potential_units", "V", "The potential units.");
   params.addRequiredParam<Real>("position_units", "Units of position.");
   return params;
 }

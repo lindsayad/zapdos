@@ -104,7 +104,8 @@ NeumannCircuitVoltageMoles_KV::computeQpResidual()
   _ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_u[_qp] * _r_units * std::exp(_ip[_qp]) -
               _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
   _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] /
-             (_muem[_qp] * -_grad_u[_qp] * _r_units * _normals[_qp]);
+             (_muem[_qp] * -_grad_u[_qp] * _r_units * _normals[_qp] +
+              std::numeric_limits<double>::epsilon());
   _v_e_th = std::sqrt(8 * _data.coulomb_charge() * 2.0 / 3 * std::exp(_mean_en[_qp] - _em[_qp]) /
                       (M_PI * _massem[_qp]));
   _v_i_th = std::sqrt(8 * _kb[_qp] * _T_heavy[_qp] / (M_PI * _mass[_qp]));
@@ -145,7 +146,8 @@ NeumannCircuitVoltageMoles_KV::computeQpJacobian()
               _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
   _d_ion_flux_d_u = _sgnip[_qp] * _muip[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp(_ip[_qp]);
   _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] /
-             (_muem[_qp] * -_grad_u[_qp] * _r_units * _normals[_qp]);
+             (_muem[_qp] * -_grad_u[_qp] * _r_units * _normals[_qp] +
+              std::numeric_limits<double>::epsilon());
   _d_n_gamma_d_u =
       (1. - _a) * _se_coeff[_qp] / _muem[_qp] *
       (_d_ion_flux_d_u * _normals[_qp] / (-_grad_u[_qp] * _r_units * _normals[_qp]) -
