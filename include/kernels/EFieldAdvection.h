@@ -34,8 +34,6 @@ protected:
 
   // Material properties
 
-  Real _r_units;
-
   const MaterialProperty<Real> & _mu;
   const MaterialProperty<Real> & _sign;
 
