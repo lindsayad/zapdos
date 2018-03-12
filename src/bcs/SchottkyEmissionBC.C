@@ -121,7 +121,7 @@ SchottkyEmissionBC::computeQpResidual()
     {
       _relaxation_Expr = std::tanh(_t / _tau);
     }
-    else if (_relax == false)
+    else
     {
       _relaxation_Expr = 1.0;
     }
@@ -204,7 +204,7 @@ SchottkyEmissionBC::computeQpOffDiagJacobian(unsigned int jvar)
       {
         _relaxation_Expr = std::tanh(_t / _tau);
       }
-      else if (_relax == false)
+      else
       {
         _relaxation_Expr = 1.0;
       }

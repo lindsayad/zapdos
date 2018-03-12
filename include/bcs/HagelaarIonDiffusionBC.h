@@ -17,7 +17,6 @@ protected:
   virtual Real computeQpResidual();
   virtual Real computeQpJacobian();
 
-  Real _r_units;
   Real _r;
 
   const MaterialProperty<Real> & _kb;
@@ -25,7 +24,8 @@ protected:
   const MaterialProperty<Real> & _mass;
 
   Real _v_thermal;
-  Real _user_velocity;
+  const Real _E0;
+  const Real _mu0;
 };
 
 #endif // HAGELAARIONDIFFUSIONBC_H

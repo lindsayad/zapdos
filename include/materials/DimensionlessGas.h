@@ -14,6 +14,8 @@ class DimensionlessGas : public Gas
 public:
   DimensionlessGas(const InputParameters & parameters);
 
+  virtual Real characteristicEField() override { return _E0; }
+
 protected:
   virtual void computeQpProperties() override;
 

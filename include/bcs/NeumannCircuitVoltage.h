@@ -46,8 +46,6 @@ protected:
   const VariableValue & _ip;
   const VariableGradient & _grad_ip;
   unsigned int _ip_id;
-  const VariableValue & _mean_en;
-  unsigned int _mean_en_id;
   const VariableValue & _em;
   const VariableGradient & _grad_em;
   unsigned int _em_id;
@@ -58,7 +56,6 @@ protected:
   const MaterialProperty<Real> & _sgnip;
   const MaterialProperty<Real> & _Dip;
   const MaterialProperty<Real> & _muem;
-  const MaterialProperty<Real> & _d_muem_d_actual_mean_en;
   const MaterialProperty<Real> & _diffem;
   const Real _e;
   const MaterialProperty<Real> & _massem;
@@ -69,10 +66,8 @@ protected:
   const Real _r;
   RealVectorValue _ion_flux;
   Real _n_gamma;
-  Real _actual_mean_en;
   Real _v_e_th;
   Real _d_v_e_th_d_em;
-  Real _d_v_e_th_d_mean_en;
   Real _v_i_th;
   Real _a;
   Real _b;
@@ -81,7 +76,6 @@ protected:
   Real _d_n_gamma_d_u;
   Real _d_n_gamma_d_ip;
   Real _d_n_gamma_d_em;
-  Real _d_n_gamma_d_mean_en;
   Real _numerator;
   Real _denominator;
   Real _d_numerator_d_u;
@@ -90,12 +84,11 @@ protected:
   Real _d_denominator_d_ip;
   Real _d_numerator_d_em;
   Real _d_denominator_d_em;
-  Real _d_numerator_d_mean_en;
-  Real _d_denominator_d_mean_en;
 
   const Real _mu0;
   const Real _l0;
   const Real _E0;
+  const MaterialProperty<Real> & _mean_energy;
 };
 
 #endif // NEUMANNCIRCUITVOLTAGE_H

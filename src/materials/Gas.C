@@ -213,6 +213,7 @@ Gas::Gas(const InputParameters & parameters)
     _alphaEl_interpolation.setData(electric_field, alphaEl);
     _mu_interpolation.setData(electric_field, mu);
     _diff_interpolation.setData(electric_field, diff);
+    _mean_en_interpolation.setData(electric_field, actual_mean_energy);
   }
   else
   {
@@ -292,7 +293,7 @@ Gas::computeQpProperties()
         _d_diffem_d_actual_mean_en[_qp] =
             _diff_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
       }
-    }
+    } // _interp_trans_coeffs
     else
     {
       // From bolos at atmospheric pressure and an EField of 2e5 V/m
@@ -301,12 +302,40 @@ Gas::computeQpProperties()
       _d_muem_d_actual_mean_en[_qp] = 0.0;
       _diffem[_qp] = 0.297951680159;
       _d_diffem_d_actual_mean_en[_qp] = 0.0;
+    } // !_inter_trans_coeffs
+
+    _actual_mean_energy[_qp] = std::exp(_mean_en[_qp] - _em[_qp]);
+    _alpha_iz[_qp] = _alpha_interpolation.sample(_actual_mean_energy[_qp]);
+    _d_iz_d_actual_mean_en[_qp] =
+        _alpha_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
+    _alpha_ex[_qp] = _alphaEx_interpolation.sample(std::exp(_mean_en[_qp] - _em[_qp]));
+    _d_ex_d_actual_mean_en[_qp] =
+        _alphaEx_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
+    if (_interp_elastic_coeff)
+    {
+      _alpha_el[_qp] = _alphaEl_interpolation.sample(std::exp(_mean_en[_qp] - _em[_qp]));
+      _d_el_d_actual_mean_en[_qp] =
+          _alphaEl_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
     }
-  }
+    else
+    {
+      _alpha_el[_qp] = 5e8;
+      _d_el_d_actual_mean_en[_qp] = 0.0;
+    }
+  } // !_use_efield
   else
   {
-    _muem[_qp] = _mu_interpolation.sample(_grad_potential[_qp].norm() * this->_E0);
-  }
+    _muem[_qp] = _mu_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _diffem[_qp] = _mu_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _alpha_iz[_qp] =
+        _alpha_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _alpha_ex[_qp] =
+        _alphaEx_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _alpha_el[_qp] =
+        _alphaEl_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _actual_mean_energy[_qp] =
+        _mean_en_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+  } // _use_efield
 
   // From Richards and Sawin, muArp*pressure = 1444 cm^2*Torr/(V*s) and diffArp*pressure = 40
   // cm^2*Torr/s. Use pressure = 760 torr.
@@ -314,25 +343,6 @@ Gas::computeQpProperties()
       1444. * _voltage_scaling /
       (10000. * 760. * _p_gas[_qp] / 1.01E5); // units of m^2/(kV*s) if _voltage_scaling = 1000
   _diffArp[_qp] = 0.004 / (760. * _p_gas[_qp] / 1.01E5); // covert to m^2 and include press
-
-  _actual_mean_energy[_qp] = std::exp(_mean_en[_qp] - _em[_qp]);
-  _alpha_iz[_qp] = _alpha_interpolation.sample(_actual_mean_energy[_qp]);
-  _d_iz_d_actual_mean_en[_qp] =
-      _alpha_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
-  _alpha_ex[_qp] = _alphaEx_interpolation.sample(std::exp(_mean_en[_qp] - _em[_qp]));
-  _d_ex_d_actual_mean_en[_qp] =
-      _alphaEx_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
-  if (_interp_elastic_coeff)
-  {
-    _alpha_el[_qp] = _alphaEl_interpolation.sample(std::exp(_mean_en[_qp] - _em[_qp]));
-    _d_el_d_actual_mean_en[_qp] =
-        _alphaEl_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp]));
-  }
-  else
-  {
-    _alpha_el[_qp] = 5e8;
-    _d_el_d_actual_mean_en[_qp] = 0.0;
-  }
 
   _el_coeff_energy_a[_qp] = 1.60638169e-13;
   _el_coeff_energy_b[_qp] = 3.17917979e-1;

@@ -46,6 +46,7 @@ DimensionlessGas::computeQpProperties()
   _diffArp[_qp] /= D0;
   _diffmean_en[_qp] /= D0;
   _d_diffmean_en_d_actual_mean_en[_qp] /= D0;
+  _diffpotential[_qp] = 1.0;
 
   _alpha_iz[_qp] *= _l0;
   _d_iz_d_actual_mean_en[_qp] *= _l0;

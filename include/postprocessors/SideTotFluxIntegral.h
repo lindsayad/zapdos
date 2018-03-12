@@ -2,7 +2,7 @@
 #define SIDETOTFLUXINTEGRAL_H
 
 // MOOSE includes
-#include "SideIntegralVariablePostprocessor.h"
+#include "SideIntegralPostprocessor.h"
 
 // Forward Declarations
 class SideTotFluxIntegral;
@@ -13,7 +13,7 @@ InputParameters validParams<SideTotFluxIntegral>();
 /**
  * This postprocessor computes a side integral of the mass flux.
  */
-class SideTotFluxIntegral : public SideIntegralVariablePostprocessor
+class SideTotFluxIntegral : public SideIntegralPostprocessor
 {
 public:
   SideTotFluxIntegral(const InputParameters & parameters);
@@ -21,23 +21,17 @@ public:
 protected:
   virtual Real computeQpIntegral();
 
-  /* std::string _diffusivity; */
-  /* const MaterialProperty<Real> & _diffusion_coef; */
-  std::string _mobility;
-  const MaterialProperty<Real> & _mobility_coef;
-
-  Real _r_units;
-  Real _r;
-  const MaterialProperty<Real> & _kb;
-  const MaterialProperty<Real> & _T_heavy;
-  const MaterialProperty<Real> & _mass;
-  Real _v_thermal;
-  Real _user_velocity;
-  const MaterialProperty<Real> & _e;
-  const MaterialProperty<Real> & _sgn;
-  Real _a;
+  MooseVariable & _ip_var;
+  const MaterialProperty<Real> & _muem;
+  const MaterialProperty<Real> & _muip;
+  const MaterialProperty<Real> & _diffem;
+  const MaterialProperty<Real> & _diffip;
 
   const VariableGradient & _grad_potential;
+  const VariableGradient & _grad_em;
+  const VariableValue & _em;
+  const VariableGradient & _grad_ip;
+  const VariableValue & _ip;
 };
 
 #endif // SIDETOTFLUXINTEGRAL_H

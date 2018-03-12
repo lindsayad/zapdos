@@ -12,29 +12,36 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef COEFFDIFFUSIONLIN_H
-#define COEFFDIFFUSIONLIN_H
+#ifndef IONIZATIONSOURCEEFIELD_H
+#define IONIZATIONSOURCEEFIELD_H
 
-#include "Diffusion.h"
+#include "Kernel.h"
 
-class CoeffDiffusionLin;
+class IonizationSourceEField;
 
 template <>
-InputParameters validParams<CoeffDiffusionLin>();
+InputParameters validParams<IonizationSourceEField>();
 
-// This diffusion kernel should only be used with species whose values are in the logarithmic form.
-
-class CoeffDiffusionLin : public Diffusion
+class IonizationSourceEField : public Kernel
 {
 public:
-  CoeffDiffusionLin(const InputParameters & parameters);
-  virtual ~CoeffDiffusionLin();
+  IonizationSourceEField(const InputParameters & parameters);
+  virtual ~IonizationSourceEField();
 
 protected:
   virtual Real computeQpResidual();
   virtual Real computeQpJacobian();
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-  const MaterialProperty<Real> & _diffusivity;
+  const MaterialProperty<Real> & _diffem;
+  const MaterialProperty<Real> & _muem;
+  const MaterialProperty<Real> & _alpha_iz;
+
+  const VariableGradient & _grad_potential;
+  unsigned int _potential_id;
+  const VariableValue & _em;
+  const VariableGradient & _grad_em;
+  unsigned int _em_id;
 };
 
-#endif /* COEFFDIFFUSIONLIN_H */
+#endif /* IONIZATIONSOURCEEFIELD_H */

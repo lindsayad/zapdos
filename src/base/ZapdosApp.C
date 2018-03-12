@@ -40,6 +40,7 @@
 #include "EFieldAdvection.h"
 #include "JouleHeating.h"
 #include "ElectronTimeDerivative.h"
+#include "IonizationSourceEField.h"
 
 // AuxKernels
 
@@ -173,6 +174,7 @@ void
 ZapdosApp::registerObjects(Factory & factory)
 {
   registerMeshModifier(NodeAndSidesetBetweenSubdomains);
+  registerKernel(IonizationSourceEField);
   registerKernel(PotentialGradientSource);
   registerKernel(EFieldMagnitudeSource);
   registerKernel(AxisymmetricCurlZ);

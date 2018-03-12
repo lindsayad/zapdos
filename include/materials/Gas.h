@@ -28,6 +28,8 @@ class Gas : public Material
 public:
   Gas(const InputParameters & parameters);
 
+  virtual Real characteristicEField() { return 0; }
+
 protected:
   virtual void computeQpProperties();
 
@@ -36,6 +38,7 @@ protected:
   SplineInterpolation _alphaEl_interpolation;
   SplineInterpolation _mu_interpolation;
   SplineInterpolation _diff_interpolation;
+  SplineInterpolation _mean_en_interpolation;
   /* LinearInterpolation _d_alpha_d_actual_mean_energy_interpolation; */
 
   /* bool _townsend; */
