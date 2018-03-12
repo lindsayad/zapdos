@@ -139,6 +139,8 @@ protected:
   const VariableGradient & _grad_em;
   const VariableGradient & _grad_ip;
   const VariableValue & _mean_en;
+
+  const bool _use_efield;
 };
 
 #endif // GAS_H
