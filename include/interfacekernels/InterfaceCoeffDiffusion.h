@@ -12,35 +12,34 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef EFIELDADVECTION_H
-#define EFIELDADVECTION_H
+#ifndef INTERFACECOEFFDIFFUSION_H
+#define INTERFACECOEFFDIFFUSION_H
 
-#include "Kernel.h"
+#include "InterfaceKernel.h"
 
-class EFieldAdvection;
+// Forward Declarations
+class InterfaceCoeffDiffusion;
 
 template <>
-InputParameters validParams<EFieldAdvection>();
+InputParameters validParams<InterfaceCoeffDiffusion>();
 
-class EFieldAdvection : public Kernel
+/**
+ * DG kernel for interfacing diffusion between two variables on adjacent blocks
+ */
+class InterfaceCoeffDiffusion : public InterfaceKernel
 {
 public:
-  EFieldAdvection(const InputParameters & parameters);
+  InterfaceCoeffDiffusion(const InputParameters & parameters);
 
 protected:
-  virtual Real computeQpResidual();
-  virtual Real computeQpJacobian();
-  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  virtual Real computeQpResidual(Moose::DGResidualType type);
+  virtual Real computeQpJacobian(Moose::DGJacobianType type);
+  virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar);
 
-  // Material properties
+  Real _r_units;
+  Real _r_neighbor_units;
 
-  const MaterialProperty<Real> & _mu;
-  const MaterialProperty<Real> & _sign;
-
-private:
-  // Coupled variables
-  unsigned int _potential_id;
-  const VariableGradient & _grad_potential;
+  const MaterialProperty<Real> & _diffusivity;
 };
 
-#endif // EFIELDADVECTION_H
+#endif

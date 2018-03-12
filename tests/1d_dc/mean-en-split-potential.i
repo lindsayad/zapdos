@@ -60,7 +60,7 @@ dom1Scale=1e-7
 
 [Preconditioning]
   [./smp]
-    type = FDP
+    type = SMP
     full = true
   [../]
 []
@@ -72,7 +72,7 @@ dom1Scale=1e-7
   # end_time = 10
   petsc_options = '-snes_converged_reason -snes_linesearch_monitor -ksp_monitor_true_residual -ksp_monitor_singular_value'
   # petsc_options = '-snes_test_display'
-  solve_type = PJFNK
+  solve_type = NEWTON
   petsc_options_iname = '-pc_type -snes_linesearch_minlambda'
   petsc_options_value = 'lu 1e-3'
   # petsc_options_iname = '-pc_type -sub_pc_type'
@@ -80,7 +80,7 @@ dom1Scale=1e-7
   # petsc_options_iname = '-snes_type'
   # petsc_options_value = 'test'
  nl_rel_tol = 1e-4
- nl_abs_tol = 7.6e-5
+ nl_abs_tol = 4e-8
   dtmin = 1e-11
   l_max_its = 100
   line_search = 'bt'
@@ -97,6 +97,7 @@ dom1Scale=1e-7
 [Outputs]
   print_perf_log = true
   print_linear_residuals = false
+  checkpoint = true
   [./out]
     type = Exodus
     execute_on = 'final'
@@ -172,7 +173,7 @@ dom1Scale=1e-7
   [./emliq_advection]
     type = EFieldAdvection
     variable = emliq
-    potential = potential
+    potential = potentialliq
     block = 1
     position_units = ${dom1Scale}
   [../]
@@ -200,7 +201,7 @@ dom1Scale=1e-7
   # [./emliq_advection_stabilization]
   #   type = EFieldArtDiff
   #   variable = emliq
-  #   potential = potential
+  #   potential = potentialliq
   #   block = 1
   # [../]
 
@@ -212,7 +213,7 @@ dom1Scale=1e-7
   [../]
   [./potential_diffusion_dom2]
     type = CoeffDiffusionLin
-    variable = potential
+    variable = potentialliq
     block = 1
     position_units = ${dom1Scale}
   [../]
@@ -230,13 +231,13 @@ dom1Scale=1e-7
   [../]
   [./emliq_charge_source]
     type = ChargeSourceMoles_KV
-    variable = potential
+    variable = potentialliq
     charged = emliq
     block = 1
   [../]
   [./OHm_charge_source]
     type = ChargeSourceMoles_KV
-    variable = potential
+    variable = potentialliq
     charged = OHm
     block = 1
   [../]
@@ -288,7 +289,7 @@ dom1Scale=1e-7
   [./OHm_advection]
     type = EFieldAdvection
     variable = OHm
-    potential = potential
+    potential = potentialliq
     block = 1
     position_units = ${dom1Scale}
   [../]
@@ -306,7 +307,7 @@ dom1Scale=1e-7
   # [./OHm_advection_stabilization]
   #   type = EFieldArtDiff
   #   variable = OHm
-  #   potential = potential
+  #   potential = potentialliq
   #   block = 1
   # [../]
   [./OHm_product_first_order_rxn]
@@ -390,24 +391,35 @@ dom1Scale=1e-7
 
 [Variables]
   [./potential]
+    block = 0
+    scaling = 1e3
+  [../]
+  [./potentialliq]
+    block = 1
+    scaling = 1e-7
   [../]
   [./em]
     block = 0
+    scaling = 1e0
   [../]
   [./emliq]
     block = 1
+    scaling = 1e0
   [../]
 
   [./Arp]
     block = 0
+    scaling = 1e2
   [../]
 
   [./mean_en]
     block = 0
+    scaling = 1e-1
   [../]
 
   [./OHm]
     block = 1
+    scaling = 1e-2
   [../]
 []
 
@@ -689,7 +701,7 @@ dom1Scale=1e-7
   [./Efield_l]
     type = Efield
     component = 0
-    potential = potential
+    potential = potentialliq
     variable = Efield
     position_units = ${dom1Scale}
     block = 1
@@ -705,7 +717,7 @@ dom1Scale=1e-7
   [../]
   [./Current_emliq]
     type = Current
-    potential = potential
+    potential = potentialliq
     density_log = emliq
     variable = Current_emliq
     art_diff = false
@@ -724,7 +736,7 @@ dom1Scale=1e-7
   [./Current_OHm]
     block = 1
     type = Current
-    potential = potential
+    potential = potentialliq
     density_log = OHm
     variable = Current_OHm
     art_diff = false
@@ -733,7 +745,7 @@ dom1Scale=1e-7
   [./tot_flux_OHm]
     block = 1
     type = TotalFlux
-    potential = potential
+    potential = potentialliq
     density_log = OHm
     variable = tot_flux_OHm
   [../]
@@ -754,7 +766,7 @@ dom1Scale=1e-7
   [../]
   [./EFieldAdvAux_emliq]
     type = EFieldAdvAux
-    potential = potential
+    potential = potentialliq
     density_log = emliq
     variable = EFieldAdvAux_emliq
     block = 1
@@ -789,6 +801,14 @@ dom1Scale=1e-7
     position_units = ${dom1Scale}
     neighbor_position_units = ${dom0Scale}
   [../]
+  [./potential_diffusion]
+    type = InterfaceCoeffDiffusion
+    neighbor_var = potential
+    variable = potentialliq
+    boundary = master1_interface
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
 []
 
 [BCs]
@@ -804,9 +824,15 @@ dom1Scale=1e-7
     r = 0
     position_units = ${dom0Scale}
   [../]
-  [./potential_dirichlet_right]
-    type = DirichletBC
+  [./potential_interface]
+    type = MatchedValueBC
     variable = potential
+    v = potentialliq
+    boundary = master0_interface
+  [../]
+  [./potentialliq_dirichlet_right]
+    type = DirichletBC
+    variable = potentialliq
     boundary = right
     value = 0
   [../]
@@ -901,14 +927,14 @@ dom1Scale=1e-7
     type = DCIonBC
     variable = emliq
     boundary = right
-    potential = potential
+    potential = potentialliq
     position_units = ${dom1Scale}
   [../]
   [./OHm_physical]
     type = DCIonBC
     variable = OHm
     boundary = 'right'
-    potential = potential
+    potential = potentialliq
     position_units = ${dom1Scale}
   [../]
 []
@@ -947,6 +973,11 @@ dom1Scale=1e-7
   [./potential_ic]
     type = FunctionIC
     variable = potential
+    function = potential_ic_func
+  [../]
+  [./potentialliq_ic]
+    type = FunctionIC
+    variable = potentialliq
     function = potential_ic_func
   [../]
   # [./em_ic]
@@ -1014,7 +1045,7 @@ dom1Scale=1e-7
  [./water_block]
    type = Water
    block = 1
-   potential = potential
+   potential = potentialliq
  [../]
  # [./jac]
  #   type = JacMat

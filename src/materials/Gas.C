@@ -9,22 +9,23 @@ validParams<Gas>()
 
   params.addParam<Real>(
       "user_relative_permittivity", 1.0, "Multiplies the permittivity of free space.");
-  // params.addRequiredParam<bool>("townsend","Whether to use the townsend formulation for the rate
-  // terms.");
-  params.addRequiredParam<bool>("interp_trans_coeffs",
-                                "Whether to interpolate transport "
-                                "coefficients as a function of the mean "
-                                "energy. If false, coeffs are constant.");
-  params.addRequiredParam<bool>("interp_elastic_coeff",
-                                "Whether to interpolate the elastic collision townsend coefficient "
-                                "as a function of the mean energy. If false, coeffs are constant.");
-  params.addRequiredParam<bool>("ramp_trans_coeffs",
-                                "Whether to ramp the non-linearity of coming "
-                                "from the electron energy dependence of the "
-                                "transport coefficients.");
-  params.addRequiredParam<std::string>("potential_units", "The potential units.");
-  params.addRequiredParam<bool>("use_moles",
-                                "Whether to use units of moles as opposed to # of molecules.");
+  params.addParam<bool>("interp_trans_coeffs",
+                        true,
+                        "Whether to interpolate transport "
+                        "coefficients as a function of the mean "
+                        "energy. If false, coeffs are constant.");
+  params.addParam<bool>("interp_elastic_coeff",
+                        true,
+                        "Whether to interpolate the elastic collision townsend coefficient "
+                        "as a function of the mean energy. If false, coeffs are constant.");
+  params.addParam<bool>("ramp_trans_coeffs",
+                        false,
+                        "Whether to ramp the non-linearity of coming "
+                        "from the electron energy dependence of the "
+                        "transport coefficients.");
+  params.addParam<std::string>("potential_units", "V", "The potential units.");
+  params.addParam<bool>(
+      "use_moles", false, "Whether to use units of moles as opposed to # of molecules.");
   params.addRequiredParam<FileName>(
       "property_tables_file", "The file containing interpolation tables for material properties.");
 
