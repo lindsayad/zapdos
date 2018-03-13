@@ -1,5 +1,3 @@
-dom0Scale = 1
-
 [GlobalParams]
   offset = 20
   characteristic_mobility = '1e-2'
@@ -115,25 +113,19 @@ dom0Scale = 1
     variable = em
   [../]
   [./em_advection]
-    type = EFieldAdvectionElectrons
+    type = EFieldAdvection
     variable = em
     potential = potential
-    mean_en = mean_en
-    position_units = ${dom0Scale}
   [../]
   [./em_diffusion]
-    type = CoeffDiffusionElectrons
+    type = CoeffDiffusion
     variable = em
-    mean_en = mean_en
-    position_units = ${dom0Scale}
   [../]
   [./em_ionization]
-    type = ElectronsFromIonization
+    type = IonizationSourceEField
     variable = em
     potential = potential
-    mean_en = mean_en
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./em_log_stabilization]
     type = LogStabilizationMoles
@@ -143,7 +135,6 @@ dom0Scale = 1
   [./potential_diffusion_dom1]
     type = CoeffDiffusionLin
     variable = potential
-    position_units = ${dom0Scale}
   [../]
   [./Arp_charge_source]
     type = ChargeSource
@@ -164,20 +155,16 @@ dom0Scale = 1
     type = EFieldAdvection
     variable = Arp
     potential = potential
-    position_units = ${dom0Scale}
   [../]
   [./Arp_diffusion]
     type = CoeffDiffusion
     variable = Arp
-    position_units = ${dom0Scale}
   [../]
   [./Arp_ionization]
-    type = IonsFromIonization
+    type = IonizationSourceEField
     variable = Arp
     potential = potential
     em = em
-    mean_en = mean_en
-    position_units = ${dom0Scale}
   [../]
   [./Arp_log_stabilization]
     type = LogStabilizationMoles
@@ -189,45 +176,38 @@ dom0Scale = 1
     variable = mean_en
   [../]
   [./mean_en_advection]
-    type = EFieldAdvectionEnergy
+    type = EFieldAdvection
     variable = mean_en
     potential = potential
-    em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_diffusion]
-    type = CoeffDiffusionEnergy
+    type = CoeffDiffusion
     variable = mean_en
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_joule_heating]
     type = JouleHeating
     variable = mean_en
     potential = potential
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_ionization]
     type = ElectronEnergyLossFromIonization
     variable = mean_en
     potential = potential
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_elastic]
     type = ElectronEnergyLossFromElastic
     variable = mean_en
     potential = potential
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_excitation]
     type = ElectronEnergyLossFromExcitation
     variable = mean_en
     potential = potential
     em = em
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_log_stabilization]
     type = LogStabilizationMoles
@@ -278,14 +258,12 @@ dom0Scale = 1
     potential = potential
     mean_en = mean_en
     r = 0.99
-    position_units = ${dom0Scale}
   [../]
   [./Arp_physical_right_diffusion]
     type = HagelaarIonDiffusionBC
     variable = Arp
     boundary = 'right'
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./Arp_physical_right_advection]
     type = HagelaarIonAdvectionBC
@@ -293,7 +271,6 @@ dom0Scale = 1
     boundary = 'right'
     potential = potential
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_physical_right]
     type = HagelaarEnergyBC
@@ -303,7 +280,6 @@ dom0Scale = 1
     em = em
     ip = Arp
     r = 0.99
-    position_units = ${dom0Scale}
   [../]
   [./em_physical_left]
     type = HagelaarElectronBC
@@ -312,7 +288,6 @@ dom0Scale = 1
     potential = potential
     mean_en = mean_en
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./sec_electrons_left]
     type = SecondaryElectronBC
@@ -322,14 +297,12 @@ dom0Scale = 1
     ip = Arp
     mean_en = mean_en
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./Arp_physical_left_diffusion]
     type = HagelaarIonDiffusionBC
     variable = Arp
     boundary = 'left'
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./Arp_physical_left_advection]
     type = HagelaarIonAdvectionBC
@@ -337,7 +310,6 @@ dom0Scale = 1
     boundary = 'left'
     potential = potential
     r = 0
-    position_units = ${dom0Scale}
   [../]
   [./mean_en_physical_left]
     type = HagelaarEnergyBC
@@ -347,7 +319,6 @@ dom0Scale = 1
     em = em
     ip = Arp
     r = 0
-    position_units = ${dom0Scale}
   [../]
 []
 

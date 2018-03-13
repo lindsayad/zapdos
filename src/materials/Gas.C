@@ -325,10 +325,12 @@ Gas::computeQpProperties()
   } // !_use_efield
   else
   {
-    _muem[_qp] = _mu_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
-    _diffem[_qp] = _mu_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+    _muem[_qp] =
+        _mu_interpolation.sample(/*_grad_potential[_qp].norm() * */ characteristicEField());
+    _diffem[_qp] =
+        _mu_interpolation.sample(/*_grad_potential[_qp].norm() * */ characteristicEField());
     _alpha_iz[_qp] =
-        _alpha_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
+        _alpha_interpolation.sample(/*_grad_potential[_qp].norm() * */ characteristicEField());
     _alpha_ex[_qp] =
         _alphaEx_interpolation.sample(_grad_potential[_qp].norm() * characteristicEField());
     _alpha_el[_qp] =

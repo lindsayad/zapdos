@@ -41,17 +41,17 @@ area = 5.02e5
 [Executioner]
   type = Transient
   end_time = 1e10
-  num_steps = 10
+  # num_steps = 10
   petsc_options = '-snes_converged_reason -ksp_converged_reason -snes_linesearch_monitor -ksp_monitor_true_residual -ksp_monitor_singular_value'
-  solve_type = PJFNK
+  solve_type = NEWTON
   petsc_options_iname = '-pc_type -snes_linesearch_minlambda'
   petsc_options_value = 'ilu       1e-3'
-  nl_rel_tol = 1e-4
-  nl_abs_tol = 1e-9
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-10
   dtmin = 1e-3
   l_max_its = 30
-  nl_max_its = 10
-  line_search = 'bt'
+  nl_max_its = 30
+  line_search = 'none'
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
@@ -77,10 +77,10 @@ area = 5.02e5
 [UserObjects]
   [./data_provider]
     type = ProvideMobility
-    # ballast_resist =  ${resist} # fails with sub
-    # electrode_area = ${area} # fails with sub
-    ballast_resist = .0016 # works
-    electrode_area = 5.02e5 # works
+    ballast_resist =  ${resist} # fails with sub
+    electrode_area = ${area} # fails with sub
+    # ballast_resist = .0016 # works
+    # electrode_area = 5.02e5 # works
     e = 1.6e-19
   [../]
 []
@@ -92,20 +92,28 @@ area = 5.02e5
   [../]
   [./Arp_lin]
   [../]
+  [./efield]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
 []
 
 [AuxKernels]
   [./em_lin]
     type = DensityFromDimensionless
-    convert_moles = true
     variable = em_lin
     density_log = em
   [../]
   [./Arp_lin]
     type = DensityFromDimensionless
-    convert_moles = true
     variable = Arp_lin
     density_log = Arp
+  [../]
+  [./efield]
+    type = Efield
+    variable = efield
+    potential = potential
+    component = 0
   [../]
   # [./e_temp]
   #   type = ElectronTemperature
@@ -117,74 +125,67 @@ area = 5.02e5
 
 [Kernels]
   [./em_time_deriv]
-    # type = ElectronTimeDerivative
-    type = TimeDerivative
+    type = ElectronTimeDerivative
     variable = em
   [../]
-  # [./em_advection]
-  #   type = EFieldAdvection
-  #   variable = em
-  #   potential = potential
-  # [../]
-  # [./em_diffusion]
-  #   type = CoeffDiffusion
-  #   variable = em
-  # [../]
-  # [./em_ionization]
-  #   type = IonizationSourceEField
-  #   variable = em
-  #   potential = potential
-  #   em = em
-  # [../]
-  # [./em_log_stabilization]
-  #   type = LogStabilizationMoles
-  #   variable = em
-  # [../]
+  [./em_advection]
+    type = EFieldAdvection
+    variable = em
+    potential = potential
+  [../]
+  [./em_diffusion]
+    type = CoeffDiffusion
+    variable = em
+  [../]
+  [./em_ionization]
+    type = IonizationSourceEField
+    variable = em
+    potential = potential
+    em = em
+  [../]
+  [./em_log_stabilization]
+    type = LogStabilizationMoles
+    variable = em
+  [../]
 
   [./potential_diffusion_dom1]
-    # type = CoeffDiffusionLin
-    type = Diffusion
+    type = CoeffDiffusionLin
     variable = potential
   [../]
-  [./potential_dummy_td]
-    type = TimeDerivative
+  [./Arp_charge_source]
+    type = ChargeSource
     variable = potential
+    charged = Arp
   [../]
-  # [./Arp_charge_source]
-  #   type = ChargeSource
-  #   variable = potential
-  #   charged = Arp
-  # [../]
-  # [./em_charge_source]
-  #   type = ChargeSource
-  #   variable = potential
-  #   charged = em
-  # [../]
+  [./em_charge_source]
+    type = ChargeSource
+    variable = potential
+    charged = em
+  [../]
 
   [./Arp_time_deriv]
-    # type = ElectronTimeDerivative
-    type = TimeDerivative
+    type = ElectronTimeDerivative
     variable = Arp
   [../]
-  # [./Arp_advection]
-  #   type = EFieldAdvection
-  #   variable = Arp
-  #   potential = potential
-  # [../]
-  # [./Arp_diffusion]
-  #   type = CoeffDiffusion
-  #   variable = Arp
-  # [../]
-  # [./Arp_ionization]
-  #   type = IonizationSourceEField
-  #   variable = Arp
-  #   potential = potential
-  #   em = em
-  # [../]
-  # [./Arp_log_stabilization]
-  #   type = LogStabilizationMoles
-  #   variable = Arp
-  # [../]
+  [./Arp_advection]
+    type = EFieldAdvection
+    variable = Arp
+    potential = potential
+  [../]
+  [./Arp_diffusion]
+    type = CoeffDiffusion
+    variable = Arp
+  [../]
+  [./Arp_ionization]
+    type = IonizationSourceEField
+    variable = Arp
+    potential = potential
+    em = em
+  [../]
+  [./Arp_log_stabilization]
+    type = LogStabilizationMoles
+    variable = Arp
+  [../]
 []
 
 [Variables]
@@ -197,16 +198,16 @@ area = 5.02e5
 []
 
 [BCs]
-  # [./potential_left]
-  #   type = CircuitDirichletPotential
-  #   current = flux
-  #   surface_potential = potential_bc_func
-  #   surface = "cathode"
-  #   resist = ${resist}
-  #   A = ${area}
-  #   boundary = 'left'
-  #   variable = potential
-  # [../]
+  [./potential_left]
+    type = CircuitDirichletPotential
+    current = flux
+    surface_potential = potential_bc_func
+    surface = "cathode"
+    resist = ${resist}
+    A = ${area}
+    boundary = 'left'
+    variable = potential
+  [../]
   # [./potential_left]
   #   type = NeumannCircuitVoltage
   #   variable = potential
@@ -217,47 +218,46 @@ area = 5.02e5
   #   em = em
   #   r = 0
   # [../]
-  [./potential_dirichlet_left]
-    type = DirichletBC
-    variable = potential
-    boundary = left
-    value = -125
-  [../]
+  # [./potential_dirichlet_left]
+  #   type = DirichletBC
+  #   variable = potential
+  #   boundary = left
+  #   value = -125
+  # [../]
   [./potential_dirichlet_right]
     type = DirichletBC
     variable = potential
     boundary = right
     value = 0
   [../]
-  # [./em_physical]
-  #   type = HagelaarElectronBC
-  #   variable = em
-  #   boundary = 'left right'
-  #   potential = potential
-  #   ip = Arp
-  #   r = 0
-  # [../]
-  # [./Arp_physical_diffusion]
-  #   type = HagelaarIonDiffusionBC
-  #   variable = Arp
-  #   boundary = 'left right'
-  #   r = 0
-  # [../]
-  # [./Arp_physical_advection]
-  #   type = HagelaarIonAdvectionBC
-  #   variable = Arp
-  #   boundary = 'left right'
-  #   potential = potential
-  #   r = 0
-  # [../]
-  # [./sec_electrons_left]
-  #   type = SecondaryElectronBC
-  #   variable = em
-  #   boundary = 'left'
-  #   potential = potential
-  #   ip = Arp
-  #   r = 0
-  # [../]
+  [./em_physical]
+    type = HagelaarElectronBC
+    variable = em
+    boundary = 'left right'
+    potential = potential
+    r = 0
+  [../]
+  [./Arp_physical_diffusion]
+    type = HagelaarIonDiffusionBC
+    variable = Arp
+    boundary = 'left right'
+    r = 0
+  [../]
+  [./Arp_physical_advection]
+    type = HagelaarIonAdvectionBC
+    variable = Arp
+    boundary = 'left right'
+    potential = potential
+    r = 0
+  [../]
+  [./sec_electrons_left]
+    type = SecondaryElectronBC
+    variable = em
+    boundary = 'left'
+    potential = potential
+    ip = Arp
+    r = 0
+  [../]
 []
 
 [ICs]
@@ -271,11 +271,11 @@ area = 5.02e5
     variable = Arp
     value = -14
   [../]
-  # [./potential_ic]
-  #   type = FunctionIC
-  #   variable = potential
-  #   function = potential_ic_func
-  # [../]
+  [./potential_ic]
+    type = FunctionIC
+    variable = potential
+    function = potential_ic_func
+  [../]
 []
 
 [Functions]
@@ -309,6 +309,6 @@ area = 5.02e5
     ip = Arp
     em = em
     boundary = 'left'
-    execute_on = 'linear nonlinear'
+    execute_on = 'nonlinear'
   [../]
 []
