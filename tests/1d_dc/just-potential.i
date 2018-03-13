@@ -1,6 +1,7 @@
 [Mesh]
   type = FileMesh
-  file = 'dimensionless-plasma.msh'
+  file = 'uniform-plasma.msh'
+  # file = 'dimensionless-plasma.msh'
 []
 
 [MeshModifiers]
