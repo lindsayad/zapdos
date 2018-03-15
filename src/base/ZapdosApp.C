@@ -39,6 +39,7 @@
 #include "EFieldAdvection.h"
 #include "JouleHeating.h"
 #include "ElectronTimeDerivative.h"
+#include "ElectronImpactReaction.h"
 
 // AuxKernels
 
@@ -63,6 +64,8 @@
 #include "SigmaMat.h"
 #include "JacMat.h"
 #include "Gas.h"
+#include "GasBase.h"
+#include "HeavySpeciesMaterial.h"
 #include "Water.h"
 
 // Indicators
@@ -201,6 +204,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerKernel(LogStabilizationMoles);
   registerKernel(ProductFirstOrderRxn);
   registerKernel(ProductAABBRxn);
+  registerKernel(ElectronImpactReaction);
   registerAux(Sigma);
   registerAux(DriftDiffusionFluxAux);
   registerAux(AbsValueAux);
@@ -220,6 +224,8 @@ ZapdosApp::registerObjects(Factory & factory)
   registerMaterial(SigmaMat);
   registerMaterial(JacMat);
   registerMaterial(Gas);
+  registerMaterial(GasBase);
+  registerMaterial(HeavySpeciesMaterial);
   registerMaterial(Water);
   registerIndicator(AnalyticalDiffIndicator);
   registerUserObject(BlockAverageValue);
