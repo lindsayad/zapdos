@@ -43,9 +43,9 @@ area = 5.02e5
   end_time = 1e10
   # num_steps = 10
   petsc_options = '-snes_converged_reason -ksp_converged_reason -snes_linesearch_monitor -ksp_monitor_true_residual -ksp_monitor_singular_value'
-  solve_type = NEWTON
-  petsc_options_iname = '-pc_type -snes_linesearch_minlambda'
-  petsc_options_value = 'ilu       1e-3'
+  solve_type = PJFNK
+  petsc_options_iname = '-pc_type -snes_linesearch_minlambda -mat_mffd_err'
+  petsc_options_value = 'ilu       1e-3                      1e-5'
   nl_rel_tol = 1e-8
   nl_abs_tol = 1e-10
   dtmin = 1e-3
@@ -53,12 +53,13 @@ area = 5.02e5
   nl_max_its = 30
   line_search = 'none'
   [./TimeStepper]
-    type = DontAllowOscillations
+    type = IterationAdaptiveDT
     cutback_factor = 0.4
     dt = 1
     growth_factor = 1.2
     optimal_iterations = 15
-    postprocessor = flux_time
+    # postprocessor = flux_time
+    # active_start_time = 1e3
   [../]
 []
 
@@ -201,7 +202,7 @@ area = 5.02e5
 [BCs]
   [./potential_left]
     type = CircuitDirichletPotential
-    current = flux
+    current = flux_time
     surface_potential = potential_bc_func
     surface = "cathode"
     resist = ${resist}
@@ -304,20 +305,20 @@ area = 5.02e5
 []
 
 [Postprocessors]
-  [./flux]
-    type = SideTotFluxIntegral
-    potential = potential
-    ip = Arp
-    em = em
-    boundary = 'left'
-    execute_on = 'nonlinear'
-  [../]
+  # [./flux]
+  #   type = SideTotFluxIntegral
+  #   potential = potential
+  #   ip = Arp
+  #   em = em
+  #   boundary = 'left'
+  #   execute_on = 'nonlinear'
+  # [../]
   [./flux_time]
     type = SideTotFluxIntegral
     potential = potential
     ip = Arp
     em = em
     boundary = 'left'
-    execute_on = 'timestep_end'
+    execute_on = 'linear'
   [../]
 []
