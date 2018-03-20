@@ -53,11 +53,12 @@ area = 5.02e5
   nl_max_its = 30
   line_search = 'none'
   [./TimeStepper]
-    type = IterationAdaptiveDT
+    type = DontAllowOscillations
     cutback_factor = 0.4
     dt = 1
     growth_factor = 1.2
     optimal_iterations = 15
+    postprocessor = flux_time
   [../]
 []
 
@@ -310,5 +311,13 @@ area = 5.02e5
     em = em
     boundary = 'left'
     execute_on = 'nonlinear'
+  [../]
+  [./flux_time]
+    type = SideTotFluxIntegral
+    potential = potential
+    ip = Arp
+    em = em
+    boundary = 'left'
+    execute_on = 'timestep_end'
   [../]
 []
