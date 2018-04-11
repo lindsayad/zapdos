@@ -119,7 +119,7 @@ dom2Scale=1.0
   [./em_advection]
     type = EFieldAdvectionElectrons
     variable = em
-    potential = potential
+    potential = potential_gas
     mean_en = mean_en
     block = 0
     position_units = ${dom0Scale}
@@ -134,7 +134,7 @@ dom2Scale=1.0
   [./em_ionization]
     type = ElectronsFromIonization
     variable = em
-    potential = potential
+    potential = potential_gas
     mean_en = mean_en
     em = em
     block = 0
@@ -148,32 +148,32 @@ dom2Scale=1.0
 
   [./potential_diffusion_dom0]
     type = CoeffDiffusionLin
-    variable = potential
+    variable = potential_gas
     block = 0
     position_units = ${dom0Scale}
   [../]
   [./potential_diffusion_dom1]
     type = CoeffDiffusionLin
-    variable = potential
+    variable = potential_d1
     block = 1
-    position_units = ${dom0Scale}
+    position_units = ${dom1Scale}
   [../]
   [./potential_diffusion_dom2]
     type = CoeffDiffusionLin
-    variable = potential
+    variable = potential_d2
     block = 2
-    position_units = ${dom0Scale}
+    position_units = ${dom2Scale}
   [../]
 
   [./Arp_charge_source]
     type = ChargeSourceMoles_KV
-    variable = potential
+    variable = potential_gas
     charged = Arp
     block = 0
   [../]
   [./em_charge_source]
     type = ChargeSourceMoles_KV
-    variable = potential
+    variable = potential_gas
     charged = em
     block = 0
   [../]
@@ -186,7 +186,7 @@ dom2Scale=1.0
   [./Arp_advection]
     type = EFieldAdvection
     variable = Arp
-    potential = potential
+    potential = potential_gas
     position_units = ${dom0Scale}
     block = 0
   [../]
@@ -199,7 +199,7 @@ dom2Scale=1.0
   [./Arp_ionization]
     type = IonsFromIonization
     variable = Arp
-    potential = potential
+    potential = potential_gas
     em = em
     mean_en = mean_en
     block = 0
@@ -219,7 +219,7 @@ dom2Scale=1.0
   [./mean_en_advection]
     type = EFieldAdvectionEnergy
     variable = mean_en
-    potential = potential
+    potential = potential_gas
     em = em
     block = 0
     position_units = ${dom0Scale}
@@ -234,7 +234,7 @@ dom2Scale=1.0
   [./mean_en_joule_heating]
     type = JouleHeating
     variable = mean_en
-    potential = potential
+    potential = potential_gas
     em = em
     block = 0
     position_units = ${dom0Scale}
@@ -242,7 +242,7 @@ dom2Scale=1.0
   [./mean_en_ionization]
     type = ElectronEnergyLossFromIonization
     variable = mean_en
-    potential = potential
+    potential = potential_gas
     em = em
     block = 0
     position_units = ${dom0Scale}
@@ -250,7 +250,7 @@ dom2Scale=1.0
   [./mean_en_elastic]
     type = ElectronEnergyLossFromElastic
     variable = mean_en
-    potential = potential
+    potential = potential_gas
     em = em
     block = 0
     position_units = ${dom0Scale}
@@ -258,7 +258,7 @@ dom2Scale=1.0
   [./mean_en_excitation]
     type = ElectronEnergyLossFromExcitation
     variable = mean_en
-    potential = potential
+    potential = potential_gas
     em = em
     block = 0
     position_units = ${dom0Scale}
@@ -274,7 +274,14 @@ dom2Scale=1.0
 
 
 [Variables]
-  [./potential]
+  [./potential_d1]
+    block = 1
+  [../]
+  [./potential_d2]
+    block = 2
+  [../]
+  [./potential_gas]
+    block = 0
   [../]
 
   [./em]
@@ -366,7 +373,7 @@ dom2Scale=1.0
   [./x_d2]
     type = Position
     variable = x
-    position_units = ${dom1Scale}
+    position_units = ${dom2Scale}
     block = 2
   [../]
 
@@ -385,7 +392,7 @@ dom2Scale=1.0
   [./x_nd2]
     type = Position
     variable = x_node
-    position_units = ${dom1Scale}
+    position_units = ${dom2Scale}
     block = 2
   [../]
 
@@ -424,7 +431,7 @@ dom2Scale=1.0
   [./Efield_g]
     type = Efield
     component = 0
-    potential = potential
+    potential = potential_gas
     variable = Efield
     position_units = ${dom0Scale}
     block = 0
@@ -432,22 +439,22 @@ dom2Scale=1.0
   [./Efield_d1]
     type = Efield
     component = 0
-    potential = potential
+    potential = potential_d1
     variable = Efield
     position_units = ${dom1Scale}
-    block = 2
+    block = 1
   [../]
   [./Efield_d2]
     type = Efield
     component = 0
-    potential = potential
+    potential = potential_d2
     variable = Efield
     position_units = ${dom2Scale}
-    block = 1
+    block = 2
   [../]
   [./Current_em]
     type = Current
-    potential = potential
+    potential = potential_gas
     density_log = em
     variable = Current_em
     art_diff = false
@@ -456,7 +463,7 @@ dom2Scale=1.0
   [../]
   [./Current_Arp]
     type = Current
-    potential = potential
+    potential = potential_gas
     density_log = Arp
     variable = Current_Arp
     art_diff = false
@@ -467,42 +474,63 @@ dom2Scale=1.0
 []
 
 
+[InterfaceKernels]
+  [./dielectric1_interface]
+    type = FluxInterface
+    neighbor_var = potential_d1
+    variable = potential_gas
+    boundary = 'master01_interface'
+    region_name = 'gas'
+    neighbor_region_name = 'd1'
+    position_units = ${dom0Scale}
+    neighbor_position_units = ${dom1Scale}
+  [../]
+
+  [./dielectric2_interface]
+    type = FluxInterface
+    neighbor_var = potential_d2
+    variable = potential_gas
+    boundary = 'master02_interface'
+    region_name = 'gas'
+    neighbor_region_name = 'd2'
+    position_units = ${dom0Scale}
+    neighbor_position_units = ${dom2Scale}
+  [../]
+[]
+
+
 [BCs]
-  #[./potential_left]
-  #  type = DirichletBC
-  #  variable = potential
-  #  boundary = 'left'
-  #  value = 0.75
-  #[../]
   [./potential_left]
     type = FunctionDirichletBC
-    variable = potential
+    variable = potential_d2
     boundary = 'left'
     function = potential_bc_dirichlet
   [../]
   [./potential_dirichlet_right]
     type = DirichletBC
-    variable = potential
+    variable = potential_d1
     boundary = 'right'
     value = 0
   [../]
-  #[./potential_right]
-  #  type = NeumannCircuitVoltageMoles_KV
-  #  variable = potential
-  #  boundary = right
-  #  function = potential_bc_func
-  #  ip = Arp
-  #  data_provider = data_provider
-  #  em = em
-  #  mean_en = mean_en
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
+
+  ### APPLY BCS ON DIELECTRIC-GAS BOUNDARY
+  [./dielectric1_potential]
+    type = MatchedValueBC
+    variable = potential_d1
+    v = potential_gas
+    boundary = 'master1_interface'
+  [../]
+  [./dielectric2_potential]
+    type = MatchedValueBC
+    variable = potential_d2
+    v = potential_gas
+    boundary = 'master2_interface'
+  [../]
   [./em_physical_right]
     type = HagelaarElectronBC
     variable = em
     boundary = 'master01_interface'
-    potential = potential
+    potential = potential_gas
     ip = Arp
     mean_en = mean_en
     #r = 0.0
@@ -520,7 +548,7 @@ dom2Scale=1.0
     type = HagelaarIonAdvectionBC
     variable = Arp
     boundary = 'master01_interface'
-    potential = potential
+    potential = potential_gas
     r = 0
     position_units = ${dom0Scale}
   [../]
@@ -528,7 +556,7 @@ dom2Scale=1.0
     type = HagelaarEnergyBC
     variable = mean_en
     boundary = 'master01_interface'
-    potential = potential
+    potential = potential_gas
     em = em
     ip = Arp
     r = 0.0
@@ -538,7 +566,7 @@ dom2Scale=1.0
     type = HagelaarElectronBC
     variable = em
     boundary = 'master02_interface'
-    potential = potential
+    potential = potential_gas
     ip = Arp
     mean_en = mean_en
     #r = 0
@@ -556,7 +584,7 @@ dom2Scale=1.0
     type = HagelaarIonAdvectionBC
     variable = Arp
     boundary = 'master02_interface'
-    potential = potential
+    potential = potential_gas
     r = 0
     position_units = ${dom0Scale}
   [../]
@@ -564,7 +592,7 @@ dom2Scale=1.0
     type = HagelaarEnergyBC
     variable = mean_en
     boundary = 'master02_interface'
-    potential = potential
+    potential = potential_gas
     em = em
     ip = Arp
     r = 0
@@ -593,9 +621,19 @@ dom2Scale=1.0
 
   [../]
 
-  [./potential_ic]
+  [./potential_gas_ic]
     type = FunctionIC
-    variable = potential
+    variable = potential_gas
+    function = potential_ic_func
+  [../]
+  [./potential_d1_ic]
+    type = FunctionIC
+    variable = potential_d1
+    function = potential_ic_func
+  [../]
+  [./potential_d2_ic]
+    type = FunctionIC
+    variable = potential_d2
     function = potential_ic_func
   [../]
 []
@@ -604,22 +642,15 @@ dom2Scale=1.0
   [./potential_bc_dirichlet]
     type = ParsedFunction
     value = '-0.75*sin(314159.26*t)'
-    #value = '0.750'
+    # RF frequency is 50kHz
   [../]
   [./potential_bc_func]
     type = ParsedFunction
-    #value = '0'
-    value = '1.25*tanh(1e6*t)'
-    #value = '0.75*sin(50e3*t)'
-    #value = '0.75*sin(314159.26*t)'
+    value = '0.01'
   [../]
   [./potential_ic_func]
     type = ParsedFunction
-    #value = '1.25 * (1.0001e-3 - x)'
-    #value = '-0.75 * (1.0001e-3 - x)'
-    #value = '-0.1 * (1.0001e-3 - x)'
     value = '0.0'
-    # V0 = 750 V, RF frequency is 50 kHz
   [../]
 []
 
@@ -631,35 +662,36 @@ dom2Scale=1.0
     interp_elastic_coeff = true
     ramp_trans_coeffs = false
     em = em
-    potential = potential
+    potential = potential_gas
     ip = Arp
     mean_en = mean_en
     user_se_coeff = 0.0
     property_tables_file = td_argon_mean_en.txt
     block = 0
  [../]
+ [./gas_constant]
+    type = GenericConstantMaterial
+    prop_names = 'diffpotential_gas'
+    prop_values = '8.854e-12'
+    block = 0
+ [../]
  [./dielectric1]
     type = GenericConstantMaterial
-    prop_names = 'diffpotential'
-    prop_values = '8.85e-11'
+    prop_names = 'diffpotential_d1'
+    prop_values = '8.854e-11'
     block = 1
  [../]
  [./dielectric2]
     type = GenericConstantMaterial
-    prop_names = 'diffpotential'
-    prop_values = '8.85e-11'
+    prop_names = 'diffpotential_d2'
+    prop_values = '8.854e-11'
     block = 2
  [../]
- [./surface_charge1]
-    type = SigmaMat
-    n = em
-    potential = potential
-    boundary = 'master01_interface'
- [../]
- [./surface_charge2]
-    type = SigmaMat
-    n = em
-    potential = potential
-    boundary = 'master02_interface'
- [../]
+ #[./sigma_mat2]
+  #  type = SigmaMat
+  #  n = em
+  #  potential = potential_gas
+  #  boundary = 'master02_interface'
+ #[../]
+
 []
