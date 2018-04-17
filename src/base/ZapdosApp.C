@@ -28,6 +28,7 @@
 #include "CoeffDiffusionLin.h"
 #include "ReactantAARxn.h"
 #include "ElectronEnergyLossFromIonization.h"
+#include "ElectronEnergyLossFromIonization2.h"
 #include "ElectronEnergyLossFromExcitation.h"
 #include "ElectronEnergyLossFromElastic.h"
 #include "IonsFromIonization.h"
@@ -39,6 +40,10 @@
 #include "EFieldAdvection.h"
 #include "JouleHeating.h"
 #include "ElectronTimeDerivative.h"
+#include "ProductFirstOrderRxnGas.h"
+#include "ProductFirstOrderRxn2Species.h"
+#include "ReactantFirstOrderRxnGas.h"
+#include "ReactantFirstOrderRxn2Species.h"
 #include "ElectronImpactReaction.h"
 
 // AuxKernels
@@ -62,10 +67,12 @@
 
 // Materials
 #include "SigmaMat.h"
+#include "SurfaceCharge.h"
 #include "JacMat.h"
 #include "Gas.h"
 #include "GasBase.h"
 #include "HeavySpeciesMaterial.h"
+#include "ReactionNetwork.h"
 #include "Water.h"
 
 // Indicators
@@ -117,6 +124,7 @@
 #include "HphiRadialInterface.h"
 #include "InterfaceAdvection.h"
 #include "InterfaceLogDiffusionElectrons.h"
+#include "FluxInterface.h"
 
 // Constraints
 
@@ -192,6 +200,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerKernel(IonsFromIonization);
   registerKernel(EFieldArtDiff);
   registerKernel(ElectronEnergyLossFromIonization);
+  registerKernel(ElectronEnergyLossFromIonization2);
   registerKernel(ElectronEnergyLossFromExcitation);
   registerKernel(ElectronEnergyLossFromElastic);
   registerKernel(CoeffDiffusion);
@@ -204,6 +213,10 @@ ZapdosApp::registerObjects(Factory & factory)
   registerKernel(LogStabilizationMoles);
   registerKernel(ProductFirstOrderRxn);
   registerKernel(ProductAABBRxn);
+  registerKernel(ProductFirstOrderRxnGas);
+  registerKernel(ProductFirstOrderRxn2Species);
+  registerKernel(ReactantFirstOrderRxnGas);
+  registerKernel(ReactantFirstOrderRxn2Species);
   registerKernel(ElectronImpactReaction);
   registerAux(Sigma);
   registerAux(DriftDiffusionFluxAux);
@@ -222,11 +235,13 @@ ZapdosApp::registerObjects(Factory & factory)
   registerAux(EFieldAdvAux);
   registerAux(UserFlux);
   registerMaterial(SigmaMat);
+  registerMaterial(SurfaceCharge);
   registerMaterial(JacMat);
   registerMaterial(Gas);
   registerMaterial(GasBase);
   registerMaterial(HeavySpeciesMaterial);
   registerMaterial(Water);
+  registerMaterial(ReactionNetwork);
   registerIndicator(AnalyticalDiffIndicator);
   registerUserObject(BlockAverageValue);
   registerUserObject(ProvideMobility);
@@ -254,6 +269,7 @@ ZapdosApp::registerObjects(Factory & factory)
   registerInterfaceKernel(InterfaceAdvection);
   registerInterfaceKernel(HphiRadialInterface);
   registerInterfaceKernel(InterfaceLogDiffusionElectrons);
+  registerInterfaceKernel(FluxInterface);
   registerDGKernel(DGCoeffDiffusion);
   registerDGKernel(DGEFieldAdvection);
   registerConstraint(ArbitrarilyTiedValueConstraint);
