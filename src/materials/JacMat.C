@@ -24,6 +24,8 @@ validParams<JacMat>()
   params.addCoupledVar("mean_en", "A variable for interpolation tests.");
   params.addCoupledVar("em", "A variable for interpolation tests.");
   params.addCoupledVar("emliq", "A variable for interpolation tests.");
+  params.addRequiredParam<FileName>(
+      "property_tables_file", "The file containing interpolation tables for material properties.");
   return params;
 }
 
@@ -104,24 +106,11 @@ JacMat::JacMat(const InputParameters & parameters)
   std::vector<Real> alphaEl;
   std::vector<Real> mu;
   std::vector<Real> diff;
-  char * zapDirPoint;
-  zapDirPoint = getenv("ZAPDIR");
-  std::string zapDir;
 
-  if (zapDirPoint == NULL)
-  {
-    mooseError("Environment variable ZAPDIR not defined.");
-    std::exit(1);
-  }
-  else
-  {
-    zapDir = std::string(zapDirPoint);
-  }
-
-  std::string tdPath = "/src/materials/test2.txt";
-  std::string path = zapDir + tdPath;
-  const char * charPathNew = path.c_str();
-  std::ifstream newfile(charPathNew);
+  std::string file_name = getParam<FileName>("property_tables_file");
+  MooseUtils::checkFileReadable(file_name);
+  const char * charPath = file_name.c_str();
+  std::ifstream newfile(charPath);
   Real value_new;
 
   if (newfile.is_open())

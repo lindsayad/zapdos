@@ -3,6 +3,140 @@
 #include "AppFactory.h"
 #include "MooseSyntax.h"
 #include "SquirrelApp.h"
+// #include "ModulesApp.h"
+
+// Kernels
+#include "PotentialGradientSource.h"
+#include "EFieldMagnitudeSource.h"
+#include "UserSource.h"
+#include "AxisymmetricCurlZ.h"
+#include "TM0CylindricalEz.h"
+#include "TM0CylindricalEr.h"
+#include "TM0Cylindrical.h"
+#include "EFieldAdvectionEnergy.h"
+#include "CoeffDiffusionElectrons.h"
+#include "CoeffDiffusionEnergy.h"
+#include "EFieldAdvectionElectrons.h"
+#include "DriftDiffusion.h"
+#include "DriftDiffusionUser.h"
+#include "DriftDiffusionElectrons.h"
+#include "DriftDiffusionEnergy.h"
+#include "ProductAABBRxn.h"
+#include "ProductFirstOrderRxn.h"
+#include "LogStabilizationMoles.h"
+#include "ChargeSourceMoles_KV.h"
+#include "CoeffDiffusionLin.h"
+#include "ReactantAARxn.h"
+#include "ElectronEnergyLossFromIonization.h"
+#include "ElectronEnergyLossFromIonization2.h"
+#include "ElectronEnergyLossFromExcitation.h"
+#include "ElectronEnergyLossFromElastic.h"
+#include "IonsFromIonization.h"
+#include "EFieldArtDiff.h"
+#include "ElectronsFromIonization.h"
+#include "ElectronsFromIonizationUser.h"
+#include "CoeffDiffusion.h"
+#include "ReactantFirstOrderRxn.h"
+#include "EFieldAdvection.h"
+#include "JouleHeating.h"
+#include "ElectronTimeDerivative.h"
+#include "ProductFirstOrderRxnGas.h"
+#include "ProductFirstOrderRxn2Species.h"
+#include "ReactantFirstOrderRxnGas.h"
+#include "ReactantFirstOrderRxn2Species.h"
+#include "ElectronImpactReaction.h"
+
+// AuxKernels
+
+#include "Sigma.h"
+#include "DriftDiffusionFluxAux.h"
+#include "UserFlux.h"
+#include "DensityMoles.h"
+#include "TM0CylindricalErAux.h"
+#include "TM0CylindricalEzAux.h"
+#include "AbsValueAux.h"
+#include "ProcRate.h"
+#include "PowerDep.h"
+#include "Current.h"
+#include "EFieldAdvAux.h"
+#include "TotalFlux.h"
+#include "Position.h"
+#include "ElectronTemperature.h"
+#include "DiffusiveFlux.h"
+#include "Efield.h"
+
+// Materials
+#include "SigmaMat.h"
+#include "SurfaceCharge.h"
+#include "JacMat.h"
+#include "Gas.h"
+#include "GasBase.h"
+#include "HeavySpeciesMaterial.h"
+#include "ReactionNetwork.h"
+#include "Water.h"
+
+// Indicators
+#include "AnalyticalDiffIndicator.h"
+
+// User Objects
+#include "BlockAverageValue.h"
+#include "ProvideMobility.h"
+#include "CurrentDensityShapeSideUserObject.h"
+
+// Boundary Conditions
+#include "PotentialDriftOutflowBC.h"
+#include "DriftDiffusionDoNothingBC.h"
+#include "DriftDiffusionUserDoNothingBC.h"
+#include "ElectronAdvectionDoNothingBC.h"
+#include "ElectronDiffusionDoNothingBC.h"
+#include "TM0AntennaVertBC.h"
+#include "TM0PECVertBC.h"
+#include "PenaltyCircuitPotential.h"
+#include "CircuitDirichletPotential.h"
+#include "SecondaryElectronBC.h"
+#include "FieldEmissionBC.h"
+#include "SchottkyEmissionBC.h"
+#include "HagelaarIonAdvectionBC.h"
+#include "HagelaarIonDiffusionBC.h"
+#include "HagelaarElectronBC.h"
+#include "HagelaarElectronAdvectionBC.h"
+#include "HagelaarEnergyBC.h"
+#include "HagelaarEnergyAdvectionBC.h"
+#include "MatchedValueLogBC.h"
+#include "NeumannCircuitVoltageMoles_KV.h"
+#include "NeumannCircuitVoltageNew.h"
+#include "DCIonBC.h"
+
+// Actions
+
+#include "AddLotsOfCoeffDiffusion.h"
+#include "AddLotsOfVariables.h"
+#include "AddLotsOfSources.h"
+#include "AddLotsOfTimeDerivatives.h"
+#include "AddLotsOfEFieldAdvection.h"
+#include "AddLotsOfPotentialDrivenArtificialDiff.h"
+
+// DGKernels
+#include "DGCoeffDiffusion.h"
+#include "DGEFieldAdvection.h"
+
+// InterfaceKernels
+#include "HphiRadialInterface.h"
+#include "InterfaceAdvection.h"
+#include "InterfaceLogDiffusionElectrons.h"
+#include "FluxInterface.h"
+
+// Constraints
+
+#include "ArbitrarilyTiedValueConstraint.h"
+
+// Mesh modifiers
+
+#include "NodeAndSidesetBetweenSubdomains.h"
+
+// Postprocessors
+
+#include "SideTotFluxIntegral.h"
 
 template <>
 InputParameters
@@ -48,7 +182,106 @@ ZapdosApp::registerApps()
 void
 ZapdosApp::registerObjects(Factory & factory)
 {
+<<<<<<< HEAD
+  registerMeshModifier(NodeAndSidesetBetweenSubdomains);
+  registerKernel(PotentialGradientSource);
+  registerKernel(EFieldMagnitudeSource);
+  registerKernel(AxisymmetricCurlZ);
+  registerKernel(UserSource);
+  registerKernel(TM0CylindricalEz);
+  registerKernel(TM0CylindricalEr);
+  registerKernel(TM0Cylindrical);
+  registerKernel(CoeffDiffusionElectrons);
+  registerKernel(CoeffDiffusionEnergy);
+  registerKernel(EFieldAdvectionElectrons);
+  registerKernel(EFieldAdvectionEnergy);
+  registerKernel(DriftDiffusion);
+  registerKernel(DriftDiffusionUser);
+  registerKernel(DriftDiffusionElectrons);
+  registerKernel(DriftDiffusionEnergy);
+  registerKernel(ChargeSourceMoles_KV);
+  registerKernel(ReactantFirstOrderRxn);
+  registerKernel(ReactantAARxn);
+  registerKernel(IonsFromIonization);
+  registerKernel(EFieldArtDiff);
+  registerKernel(ElectronEnergyLossFromIonization);
+  registerKernel(ElectronEnergyLossFromIonization2);
+  registerKernel(ElectronEnergyLossFromExcitation);
+  registerKernel(ElectronEnergyLossFromElastic);
+  registerKernel(CoeffDiffusion);
+  registerKernel(EFieldAdvection);
+  registerKernel(JouleHeating);
+  registerKernel(ElectronTimeDerivative);
+  registerKernel(ElectronsFromIonization);
+  registerKernel(ElectronsFromIonizationUser);
+  registerKernel(CoeffDiffusionLin);
+  registerKernel(LogStabilizationMoles);
+  registerKernel(ProductFirstOrderRxn);
+  registerKernel(ProductAABBRxn);
+  registerKernel(ProductFirstOrderRxnGas);
+  registerKernel(ProductFirstOrderRxn2Species);
+  registerKernel(ReactantFirstOrderRxnGas);
+  registerKernel(ReactantFirstOrderRxn2Species);
+  registerKernel(ElectronImpactReaction);
+  registerAux(Sigma);
+  registerAux(DriftDiffusionFluxAux);
+  registerAux(AbsValueAux);
+  registerAux(DensityMoles);
+  registerAux(TM0CylindricalEzAux);
+  registerAux(TM0CylindricalErAux);
+  registerAux(Current);
+  registerAux(PowerDep);
+  registerAux(ProcRate);
+  registerAux(TotalFlux);
+  registerAux(Position);
+  registerAux(Efield);
+  registerAux(ElectronTemperature);
+  registerAux(DiffusiveFlux);
+  registerAux(EFieldAdvAux);
+  registerAux(UserFlux);
+  registerMaterial(SigmaMat);
+  registerMaterial(SurfaceCharge);
+  registerMaterial(JacMat);
+  registerMaterial(Gas);
+  registerMaterial(GasBase);
+  registerMaterial(HeavySpeciesMaterial);
+  registerMaterial(Water);
+  registerMaterial(ReactionNetwork);
+  registerIndicator(AnalyticalDiffIndicator);
+  registerUserObject(BlockAverageValue);
+  registerUserObject(ProvideMobility);
+  registerUserObject(CurrentDensityShapeSideUserObject);
+  registerBoundaryCondition(PotentialDriftOutflowBC);
+  registerBoundaryCondition(DriftDiffusionDoNothingBC);
+  registerBoundaryCondition(DriftDiffusionUserDoNothingBC);
+  registerBoundaryCondition(TM0AntennaVertBC);
+  registerBoundaryCondition(ElectronAdvectionDoNothingBC);
+  registerBoundaryCondition(ElectronDiffusionDoNothingBC);
+  registerBoundaryCondition(TM0PECVertBC);
+  registerBoundaryCondition(PenaltyCircuitPotential);
+  registerBoundaryCondition(CircuitDirichletPotential);
+  registerBoundaryCondition(SecondaryElectronBC);
+  registerBoundaryCondition(FieldEmissionBC);
+  registerBoundaryCondition(SchottkyEmissionBC);
+  registerBoundaryCondition(HagelaarIonAdvectionBC);
+  registerBoundaryCondition(HagelaarIonDiffusionBC);
+  registerBoundaryCondition(HagelaarElectronBC);
+  registerBoundaryCondition(HagelaarElectronAdvectionBC);
+  registerBoundaryCondition(HagelaarEnergyBC);
+  registerBoundaryCondition(HagelaarEnergyAdvectionBC);
+  registerBoundaryCondition(NeumannCircuitVoltageMoles_KV);
+  registerBoundaryCondition(DCIonBC);
+  registerInterfaceKernel(InterfaceAdvection);
+  registerInterfaceKernel(HphiRadialInterface);
+  registerInterfaceKernel(InterfaceLogDiffusionElectrons);
+  registerInterfaceKernel(FluxInterface);
+  registerDGKernel(DGCoeffDiffusion);
+  registerDGKernel(DGEFieldAdvection);
+  registerConstraint(ArbitrarilyTiedValueConstraint);
+  registerPostprocessor(SideTotFluxIntegral);
+=======
   Registry::registerObjectsTo(factory, {"ZapdosApp"});
+>>>>>>> 1ae6b93ee94809e48795c055828be14ec5eec7fb
 }
 
 void

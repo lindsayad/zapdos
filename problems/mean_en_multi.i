@@ -80,11 +80,10 @@ dom1Scale=1e-7
  nl_rel_tol = 1e-4
  nl_abs_tol = 7.6e-5
   dtmin = 1e-12
-  l_max_its = 20
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-11
+    dt = 1e-9
     # dt = 1.1
     growth_factor = 1.2
    optimal_iterations = 15
@@ -93,7 +92,7 @@ dom1Scale=1e-7
 
 [Outputs]
   print_perf_log = true
-  #print_linear_residuals = false
+  print_linear_residuals = false
   [./out]
     type = Exodus
   [../]
@@ -239,6 +238,7 @@ dom1Scale=1e-7
     variable = Arp
     block = 0
   [../]
+
   [./Arp_advection]
     type = EFieldAdvection
     variable = Arp
@@ -246,6 +246,17 @@ dom1Scale=1e-7
     position_units = ${dom0Scale}
     block = 0
   [../]
+
+  [./ArEx_excitation]
+    type = ElectronImpactReaction
+    variable = ArEx
+    potential = potential
+    em = em
+    mean_en = mean_en
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+
   [./Arp_diffusion]
     type = CoeffDiffusion
     variable = Arp
@@ -266,12 +277,25 @@ dom1Scale=1e-7
     variable = Arp
     block = 0
   [../]
-  # [./Arp_advection_stabilization]
-  #   type = EFieldArtDiff
-  #   variable = Arp
-  #   potential = potential
-  #   block = 0
-  # [../]
+
+  [./ArEx_time_deriv]
+    type = ElectronTimeDerivative
+    variable = ArEx
+    block = 0
+  [../]
+
+  [./ArEx_diffusion]
+    type = CoeffDiffusion
+    variable = ArEx
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+
+  [./ArEx_log_stabilization]
+    type = LogStabilizationMoles
+    variable = ArEx
+    block = 0
+  [../]
 
   [./OHm_time_deriv]
     type = ElectronTimeDerivative
@@ -373,12 +397,6 @@ dom1Scale=1e-7
     block = 0
     offset = 15
   [../]
-  # [./mean_en_advection_stabilization]
-  #   type = EFieldArtDiff
-  #   variable = mean_en
-  #   potential = potential
-  #   block = 0
-  # [../]
 []
 
 [Variables]
@@ -393,6 +411,10 @@ dom1Scale=1e-7
   [../]
 
   [./Arp]
+    block = 0
+  [../]
+
+  [./ArEx]
     block = 0
   [../]
 
@@ -440,6 +462,11 @@ dom1Scale=1e-7
     block = 1
   [../]
   [./Arp_lin]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+  [../]
+  [./ArEx_lin]
     order = CONSTANT
     family = MONOMIAL
     block = 0
@@ -667,6 +694,13 @@ dom1Scale=1e-7
     density_log = Arp
     block = 0
   [../]
+  [./ArEx_lin]
+    type = DensityMoles
+    convert_moles = true
+    variable = ArEx_lin
+    density_log = ArEx
+    block = 0
+  [../]
   [./OHm_lin]
     type = DensityMoles
     convert_moles = true
@@ -883,6 +917,36 @@ dom1Scale=1e-7
     r = 0
     position_units = ${dom0Scale}
   [../]
+  [./ArEx_physical_right_diffusion]
+    type = HagelaarIonDiffusionBC
+    variable = ArEx
+    boundary = 'master0_interface'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  #[./ArEx_physical_right_advection]
+  #  type = HagelaarIonAdvectionBC
+  #  variable = ArEx
+  #  boundary = 'master0_interface'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  [./ArEx_physical_left_diffusion]
+    type = HagelaarIonDiffusionBC
+    variable = ArEx
+    boundary = 'left'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  #[./ArEx_physical_left_advection]
+  #  type = HagelaarIonAdvectionBC
+  #  variable = ArEx
+  #  boundary = 'left'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
   [./mean_en_physical_left]
     type = HagelaarEnergyBC
     variable = mean_en
@@ -928,6 +992,13 @@ dom1Scale=1e-7
     value = -21
     block = 0
   [../]
+  [./ArEx_ic]
+    type = ConstantIC
+    variable = ArEx
+    value = -41
+    #value = -21
+    block = 0
+  [../]
   [./mean_en_ic]
     type = ConstantIC
     variable = mean_en
@@ -950,35 +1021,6 @@ dom1Scale=1e-7
     value = -15.6
     block = 1
   [../]
-  # [./em_ic]
-  #   type = RandomIC
-  #   variable = em
-  #   block = 0
-  # [../]
-  # [./emliq_ic]
-  #   type = RandomIC
-  #   variable = emliq
-  #   block = 1
-  # [../]
-  # [./Arp_ic]
-  #   type = RandomIC
-  #   variable = Arp
-  #   block = 0
-  # [../]
-  # [./mean_en_ic]
-  #   type = RandomIC
-  #   variable = mean_en
-  #   block = 0
-  # [../]
-  # [./potential_ic]
-  #   type = RandomIC
-  #   variable = potential
-  # [../]
-  # [./OHm_ic]
-  #   type = RandomIC
-  #   variable = OHm
-  #   block = 1
-  # [../]
 []
 
 [Functions]
@@ -995,8 +1037,7 @@ dom1Scale=1e-7
 
 [Materials]
   [./gas_block]
-    type = Gas
-    #type = HeavySpeciesMaterial
+    type = GasBase
     interp_trans_coeffs = true
     interp_elastic_coeff = true
     ramp_trans_coeffs = false
@@ -1008,14 +1049,29 @@ dom1Scale=1e-7
     block = 0
     property_tables_file = td_argon_mean_en.txt
  [../]
- #[./gas_species_0]
-#   type = HeavySpeciesMaterial
-#   heavy_species_name = Arp
-#   heavy_species_mass = 6.64e-26
-#   heavy_species_charge = 1.0
-#   #property_tables_file = td_argon_mean_en.txt
+ [./gas_species_0]
+   type = HeavySpeciesMaterial
+   heavy_species_name = Arp
+   heavy_species_mass = 6.64e-26
+   heavy_species_charge = 1.0
+   #property_tables_file = td_argon_mean_en.txt
+   block = 0
+ [../]
+ [./gas_species_1]
+   type = HeavySpeciesMaterial
+   heavy_species_name = ArEx
+   heavy_species_mass = 6.64e-26
+   heavy_species_charge = 1.0
+   block = 0
+ [../]
+# [./reaction_network]
+#   type = ReactionNetwork
+#   potential = potential
 #   block = 0
- #[../]
+#   reactant_species_name = Arp
+#   product_species_name = ArEx
+#   position_units = ${dom0Scale}
+# [../]
  [./water_block]
    type = Water
    block = 1
